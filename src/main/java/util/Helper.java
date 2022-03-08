@@ -5,11 +5,13 @@ import dto.FlightDto;
 import dto.PassengerDto;
 import model.Flight;
 import model.Passenger;
+import service.PassengerService;
 import service.impl.PassengerServiceImpl;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class Helper {
@@ -49,5 +51,23 @@ public class Helper {
                         + Helper.mapToFlightDto(flights).get(i).getDate());
             }
         }
+    }
+
+    public static ArrayList<PassengerDto> getPassengerDataFromConsole(PassengerService passengerService, short seats, Scanner scanner){
+        ArrayList<PassengerDto> passengerDtos = new ArrayList<>();
+        for(int i = 0; i < seats; i++){
+            System.out.print("Enter fin code and full name (EX: 123456 Nicat Guliyev) : ");
+            String fullName = scanner.nextLine();
+            String[] passengerData = fullName.split(" ");
+            if(passengerData.length < 3){
+                System.out.println("Warning: Enter passenger data right format!");
+            }
+            else{
+                PassengerDto passengerDto = new PassengerDto(passengerData[1], passengerData[2], passengerData[0]);
+                passengerDtos.add(passengerDto);
+                passengerService.createPassenger(passengerDto);
+            }
+        }
+        return passengerDtos;
     }
 }

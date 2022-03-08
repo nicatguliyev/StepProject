@@ -1,22 +1,24 @@
 package dto;
+import model.Booking;
+
 import java.util.Objects;
 
 public class BookingDto {
     private int id;
-    private int passenger_id;
+    private String fin_code;
     private String serial_number;
 
     public BookingDto() {
     }
 
-    public BookingDto(int passenger_id, String serial_number) {
-        this.passenger_id = passenger_id;
+    public BookingDto(String fin_code, String serial_number) {
+        this.fin_code = fin_code;
         this.serial_number = serial_number;
     }
 
-    public BookingDto(int id, int passenger_id, String serial_number) {
+    public BookingDto(int id, String fin_code, String serial_number) {
         this.id = id;
-        this.passenger_id = passenger_id;
+        this.fin_code = fin_code;
         this.serial_number = serial_number;
     }
 
@@ -28,12 +30,12 @@ public class BookingDto {
         this.id = id;
     }
 
-    public int getPassenger_id() {
-        return passenger_id;
+    public String getFin_code() {
+        return fin_code;
     }
 
-    public void setPassenger_id(int passenger_id) {
-        this.passenger_id = passenger_id;
+    public void setFin_code(String fin_code) {
+        this.fin_code = fin_code;
     }
 
     public String getSerial_number() {
@@ -48,20 +50,21 @@ public class BookingDto {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof BookingDto)) return false;
-        BookingDto that = (BookingDto) o;
-        return getId() == that.getId() && getPassenger_id() == that.getPassenger_id() && Objects.equals(getSerial_number(), that.getSerial_number());
+        BookingDto bookingDto = (BookingDto) o;
+        return getId() == bookingDto.getId() && Objects.equals(fin_code, bookingDto.fin_code)
+                && Objects.equals(getSerial_number(), bookingDto.getSerial_number());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getPassenger_id(), getSerial_number());
+        return Objects.hash(getId(), fin_code, getSerial_number());
     }
 
     @Override
     public String toString() {
-        return "BookingDto{" +
+        return "Booking{" +
                 "id=" + id +
-                ", passenger_id=" + passenger_id +
+                ", fin_code='" + fin_code + '\'' +
                 ", serial_number='" + serial_number + '\'' +
                 '}';
     }

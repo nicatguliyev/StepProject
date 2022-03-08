@@ -50,4 +50,16 @@ public class FlightDaoImpl implements FlightDao {
         }
 
     }
+
+    @Override
+    public boolean updateFlightSeats(short seats, String serial_number) {
+        try {
+            Statement statement = connection.createStatement();
+            return statement.execute(String.format("Update Flights set seats =  %d where serial_number = '%s'",
+                    seats, serial_number));
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return true;
+        }
+    }
 }

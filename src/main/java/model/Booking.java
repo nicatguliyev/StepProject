@@ -4,20 +4,20 @@ import java.util.Objects;
 
 public class Booking {
     private int id;
-    private int passenger_id;
+    private String fin_code;
     private String serial_number;
 
     public Booking() {
     }
 
-    public Booking(int passenger_id, String serial_number) {
-        this.passenger_id = passenger_id;
+    public Booking(String fin_code, String serial_number) {
+        this.fin_code = fin_code;
         this.serial_number = serial_number;
     }
 
-    public Booking(int id, int passenger_id, String serial_number) {
+    public Booking(int id, String fin_code, String serial_number) {
         this.id = id;
-        this.passenger_id = passenger_id;
+        this.fin_code = fin_code;
         this.serial_number = serial_number;
     }
 
@@ -29,12 +29,12 @@ public class Booking {
         this.id = id;
     }
 
-    public int getPassenger_id() {
-        return passenger_id;
+    public String getFin_code() {
+        return fin_code;
     }
 
-    public void setPassenger_id(int passenger_id) {
-        this.passenger_id = passenger_id;
+    public void setFin_code(String fin_code) {
+        this.fin_code = fin_code;
     }
 
     public String getSerial_number() {
@@ -50,19 +50,19 @@ public class Booking {
         if (this == o) return true;
         if (!(o instanceof Booking)) return false;
         Booking booking = (Booking) o;
-        return getId() == booking.getId() && getPassenger_id() == booking.getPassenger_id() && Objects.equals(getSerial_number(), booking.getSerial_number());
+        return getId() == booking.getId() && Objects.equals(fin_code, booking.fin_code) && Objects.equals(getSerial_number(), booking.getSerial_number());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getPassenger_id(), getSerial_number());
+        return Objects.hash(getId(), fin_code, getSerial_number());
     }
 
     @Override
     public String toString() {
         return "Booking{" +
                 "id=" + id +
-                ", passenger_id=" + passenger_id +
+                ", fin_code='" + fin_code + '\'' +
                 ", serial_number='" + serial_number + '\'' +
                 '}';
     }

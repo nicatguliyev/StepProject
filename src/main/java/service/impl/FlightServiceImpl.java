@@ -1,11 +1,15 @@
 package service.impl;
 
+import dao.BookingDao;
 import dao.FlightDao;
 import dao.PassengerDao;
+import dao.impl.BookingDaoImpl;
 import dao.impl.PassengerDaoImpl;
+import dto.BookingDto;
 import dto.FlightDto;
 import dto.PassengerDto;
 import model.Flight;
+import service.BookingService;
 import service.FlightService;
 import service.PassengerService;
 import util.DataParser;
@@ -14,12 +18,16 @@ import util.Helper;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class FlightServiceImpl implements FlightService {
     private final FlightDao flightDao;
     private final PassengerDao passengerDao = new PassengerDaoImpl();
     private final PassengerService passengerService = new PassengerServiceImpl(passengerDao);
+    private final BookingDao bookingDao = new BookingDaoImpl();
+    private final BookingService  bookingService = new BookingServiceImpl(bookingDao);
 
     public FlightServiceImpl(FlightDao flightDao) {
         this.flightDao = flightDao;
@@ -54,22 +62,25 @@ public class FlightServiceImpl implements FlightService {
         Helper.printFlightsInfo(flights);
         System.out.print("Enter 0 to return main menu or enter serial number for booking : ");
         Scanner scanner = new Scanner(System.in);
-        if(Helper.chooseZeroOrSerial(scanner.nextLine(), Helper.mapToFlightDto(flights))){
-            for(int i = 0; i < seats; i++){
-                System.out.print("Enter fin code and full name (EX: 123456 Nicat Guliyev) : ");
-                String fullName = scanner.nextLine();
-                String[] passengerData = fullName.split(" ");
-                if(passengerData.length < 3){
-                    System.out.println("Warning: Enter passenger data right format!");
+        String serial_number = scanner.nextLine();
+        if(Helper.chooseZeroOrSerial(serial_number, Helper.mapToFlightDto(flights))){
+            List<FlightDto> flightList =  Helper.mapToFlightDto(flights).stream().filter(flight1 -> flight1.getSerial_number().equals(serial_number)).collect(Collectors.toList());
+            ArrayList<PassengerDto> passengerDtos = Helper.getPassengerDataFromConsole(passengerService,seats,scanner);
+            for(int i = 0; i < passengerDtos.size(); i++){
+                if(bookingService.getBookingBySerialAndFin(passengerDtos.get(i).getFinCode(), serial_number) == 0){
+                    bookingService.createBooking(passengerDtos.get(i).getFinCode(), serial_number);
+                    flightDao.updateFlightSeats((short) (flightList.get(0).getSeats()-1), serial_number);
+                    flightList.get(0).setSeats((short) (flightList.get(0).getSeats()-1));
                 }
                 else{
-                    PassengerDto passengerDto = new PassengerDto(passengerData[1], passengerData[2], passengerData[0]);
-                    passengerService.createPassenger(passengerDto);
+                    System.out.println("Booking is not created");
                 }
             }
         }
         System.out.println("--------------------------------------------------------------------------");
     }
+
+
 
 }
 
