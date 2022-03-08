@@ -15,7 +15,8 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Override
     public void createPassenger(PassengerDto passengerDto) {
-        Passenger passenger = new Passenger();
-        passengerDao.createPassenger(passenger);
+        Passenger passenger = new Passenger(passengerDto.getFirstname(),
+                passengerDto.getLastname(), passengerDto.getFinCode());
+        System.out.println(passengerDao.createPassenger(passenger));
     }
 }

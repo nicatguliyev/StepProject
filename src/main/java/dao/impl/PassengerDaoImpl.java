@@ -10,17 +10,19 @@ import java.sql.Statement;
 public class PassengerDaoImpl implements PassengerDao {
     Connection connection = SqlConnection.createConnection();
     @Override
-    public void createPassenger(Passenger passenger) {
+    public String createPassenger(Passenger passenger) {
         try {
             Statement statement = connection.createStatement();
-             statement.executeQuery(String.format("Insert into Passengers(fin_code, firstname, lastname)\n" +
-                    "Select '%s', '%s', '%s' \n" +
-                    "where not exists (Select fin_code \n" +
-                    "from Passengers where fin_code = '%s')",
+            statement.execute(String.format("Insert into Passengers(fin_code, firstname, lastname)\n" +
+                            "values('%s' , '%s', '%s')",
                     passenger.getFinCode(), passenger.getFirstname(),
-                    passenger.getLastname(), passenger.getFinCode()));
+                    passenger.getLastname()));
+            return "Passenger is crated";
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            if (e.getMessage().contains("duplicate key value"))
+                return "Passenger already exists";
+            else
+                return e.getMessage();
         }
     }
 }

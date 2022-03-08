@@ -1,9 +1,13 @@
 package service.impl;
 
 import dao.FlightDao;
+import dao.PassengerDao;
+import dao.impl.PassengerDaoImpl;
 import dto.FlightDto;
+import dto.PassengerDto;
 import model.Flight;
 import service.FlightService;
+import service.PassengerService;
 import util.DataParser;
 import util.Helper;
 
@@ -14,6 +18,8 @@ import java.util.Scanner;
 
 public class FlightServiceImpl implements FlightService {
     private final FlightDao flightDao;
+    private final PassengerDao passengerDao = new PassengerDaoImpl();
+    private final PassengerService passengerService = new PassengerServiceImpl(passengerDao);
 
     public FlightServiceImpl(FlightDao flightDao) {
         this.flightDao = flightDao;
@@ -48,7 +54,20 @@ public class FlightServiceImpl implements FlightService {
         Helper.printFlightsInfo(flights);
         System.out.print("Enter 0 to return main menu or enter serial number for booking : ");
         Scanner scanner = new Scanner(System.in);
-        Helper.chooseZeroOrSerial(scanner.nextLine(), Helper.mapToFlightDto(flights));
+        if(Helper.chooseZeroOrSerial(scanner.nextLine(), Helper.mapToFlightDto(flights))){
+            for(int i = 0; i < seats; i++){
+                System.out.print("Enter fin code and full name (EX: 123456 Nicat Guliyev) : ");
+                String fullName = scanner.nextLine();
+                String[] passengerData = fullName.split(" ");
+                if(passengerData.length < 3){
+                    System.out.println("Warning: Enter passenger data right format!");
+                }
+                else{
+                    PassengerDto passengerDto = new PassengerDto(passengerData[1], passengerData[2], passengerData[0]);
+                    passengerService.createPassenger(passengerDto);
+                }
+            }
+        }
         System.out.println("--------------------------------------------------------------------------");
     }
 

@@ -5,5 +5,5 @@ import model.Passenger;
 import java.sql.ResultSet;
 
 public interface PassengerDao {
-    void createPassenger(Passenger passenger);
+    String createPassenger(Passenger passenger);
 }

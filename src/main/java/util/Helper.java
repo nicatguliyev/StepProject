@@ -5,7 +5,6 @@ import dto.FlightDto;
 import dto.PassengerDto;
 import model.Flight;
 import model.Passenger;
-import service.PassengerService;
 import service.impl.PassengerServiceImpl;
 
 import java.sql.ResultSet;
@@ -22,17 +21,17 @@ public class Helper {
                 flight.getDate())).collect(Collectors.toList());
     }
 
-    public static void chooseZeroOrSerial(String choice, List<FlightDto> flightDtos) {
+    public static boolean chooseZeroOrSerial(String choice, List<FlightDto> flightDtos) {
         if (choice.equals("0")) {
-            return;
+            return false;
         } else {
             List<FlightDto> flightDtoList = flightDtos.stream().
                     filter(x -> x.getSerial_number().equals(choice)).collect(Collectors.toList());
             if (flightDtoList.size() == 0) {
                 System.out.println("Enter valid serial number");
-                return;
+                return false;
             } else {
-                System.out.print("Enter passenger full name : ");
+                return true;
             }
         }
     }
