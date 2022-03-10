@@ -1,6 +1,7 @@
 package controller;
 
 import service.FlightService;
+import util.ConsoleColors;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,18 +21,18 @@ public class FlightController {
     }
 
     public void showFlightBySerial(){
-        System.out.print("Enter the serial number : ");
+        System.out.print(ConsoleColors.TEXT_YELLOW+"Enter the serial number : "+ConsoleColors.TEXT_RESET);
         String serial_number = scanner.nextLine();
         flightService.showFlightBySerial(serial_number);
     }
 
     public void showFlightsForBooking(){
-        System.out.print("Enter destination : ");
+        System.out.print(ConsoleColors.TEXT_YELLOW+"Enter destination : "+ConsoleColors.TEXT_RESET);
         String destination = scanner.nextLine();
-        System.out.print("Enter number of passengers : ");
+        System.out.print(ConsoleColors.TEXT_YELLOW+"Enter number of passengers : "+ConsoleColors.TEXT_RESET);
         short seats = scanner.nextShort();
         scanner.nextLine();
-        System.out.print("Enter date : ");
+        System.out.print(ConsoleColors.TEXT_YELLOW+"Enter date : "+ConsoleColors.TEXT_RESET);
         Date date = null;
         try {
             date = new SimpleDateFormat("yyyy-MM-dd").parse(scanner.nextLine());

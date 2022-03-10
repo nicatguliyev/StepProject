@@ -3,6 +3,7 @@ package dao.impl;
 import dao.BookingDao;
 import model.Booking;
 import util.SqlConnection;
+import util.SqlQueries;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -11,31 +12,62 @@ import java.sql.Statement;
 
 public class BookingDaoImpl implements BookingDao {
 
-    Connection connection = SqlConnection.createConnection();
-    @Override
-    public boolean createBooking(String serial_number, String fin_code) {
+    Connection connection;
 
-        Boolean bool = false;
+    @Override
+    public boolean createBooking(Booking booking) {
         try {
+            connection = SqlConnection.checkConnection(connection);
             Statement statement = connection.createStatement();
-            bool = statement.execute(String.format("Insert Into Booking (fin_code, serial_number) " +
-                    "values('%s' , '%s')", fin_code, serial_number));
+            boolean bool = statement.execute(SqlQueries.insertBookingSql(booking));
+            connection.close();
             return bool;
         } catch (SQLException e) {
             e.printStackTrace();
             return true;
         }
+
     }
 
     @Override
-    public ResultSet getBookingBySerialAndFin(String fin_code, String serial_number) {
+    public ResultSet getBookingBySerialAndFin(Booking booking) {
         try {
+            connection = SqlConnection.checkConnection(connection);
             Statement statement = connection.createStatement();
-            return statement.executeQuery(String.format("Select count(fin_code) from Booking where fin_code = '%s' " +
-                    "AND serial_number = '%s'" , fin_code, serial_number));
+            ResultSet resultSet = statement.executeQuery(SqlQueries.selectBookingBySerialAndFinSql(booking));
+            connection.close();
+            return resultSet;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             return null;
+        }
+    }
+
+    @Override
+    public int deleteBooking(Booking booking) {
+        try {
+            connection = SqlConnection.checkConnection(connection);
+            Statement statement = connection.createStatement();
+            int count = statement.executeUpdate(SqlQueries.deleteBookingByIdSql(booking));
+            connection.close();
+            return count;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return 0;
+        }
+    }
+
+    @Override
+    public int updateFlightSeatsByBookingId(Booking booking) {
+        try {
+            connection  = SqlConnection.checkConnection(connection);
+            Statement statement = connection.createStatement();
+            int count = statement.executeUpdate(SqlQueries.updateFlightSeatsByBookingIdSql(booking));
+            connection.close();
+            return count;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return 0;
         }
     }
 }

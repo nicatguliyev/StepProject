@@ -6,6 +6,8 @@ import java.awt.print.Book;
 import java.sql.ResultSet;
 
 public interface BookingDao {
-    boolean createBooking(String serial_numberDto, String fin_codeDto);
-    ResultSet getBookingBySerialAndFin(String fin_code, String serial_number);
+    boolean createBooking(Booking booking);
+    ResultSet getBookingBySerialAndFin(Booking booking);
+    int deleteBooking(Booking booking);
+    int updateFlightSeatsByBookingId(Booking booking);
 }

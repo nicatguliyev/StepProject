@@ -18,4 +18,15 @@ public class SqlConnection {
         }
         return connection;
     }
+
+    public static Connection checkConnection(Connection connection){
+        try {
+            if(connection == null || connection.isClosed()){
+                connection = SqlConnection.createConnection();
+            }
+        } catch (SQLException e) {
+            System.out.println("Can not created Database Connection");
+        }
+        return connection;
+    }
 }

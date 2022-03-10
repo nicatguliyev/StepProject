@@ -1,9 +1,11 @@
 package service.impl;
 
 import dao.BookingDao;
+
 import dto.BookingDto;
 import model.Booking;
 import service.BookingService;
+import util.ConsoleColors;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,16 +18,18 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public void createBooking(String fin_code, String serial_number) {
-        if(!bookingDao.createBooking(serial_number, fin_code)){
-            System.out.println("Booking is created");
+    public void createBooking(BookingDto bookingDto) {
+        Booking booking = new Booking(bookingDto.getFin_code(), bookingDto.getSerial_number());
+        if (!bookingDao.createBooking(booking)) {
+            System.out.println(ConsoleColors.TEXT_GREEN+"Booking is created"+ConsoleColors.TEXT_RESET);
         }
     }
 
     @Override
-    public int getBookingBySerialAndFin(String fin_codeDto, String serial_numberDto) {
+    public int getBookingBySerialAndFin(BookingDto bookingDto) {
+        Booking booking = new Booking(bookingDto.getFin_code(), bookingDto.getSerial_number());
         int count = 0;
-        ResultSet resultSet = bookingDao.getBookingBySerialAndFin(fin_codeDto, serial_numberDto);
+        ResultSet resultSet = bookingDao.getBookingBySerialAndFin(booking);
         try {
             while (resultSet.next()) {
                 count = resultSet.getInt("count");
@@ -33,7 +37,19 @@ public class BookingServiceImpl implements BookingService {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-
         return count;
+    }
+
+    @Override
+    public void deleteBooking(BookingDto bookingDto) {
+        Booking booking = new Booking();
+        booking.setId(bookingDto.getId());
+        int count = bookingDao.updateFlightSeatsByBookingId(booking);
+        if (count > 0) {
+            if (bookingDao.deleteBooking(booking) > 0)
+                System.out.println(ConsoleColors.TEXT_GREEN+"Booking was canceled"+ConsoleColors.TEXT_RESET);
+            else
+                System.out.println(ConsoleColors.TEXT_RED+"Booking was not cancelled"+ConsoleColors.TEXT_RESET);
+        }
     }
 }

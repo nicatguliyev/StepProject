@@ -2,24 +2,26 @@ package dao.impl;
 
 import dao.FlightDao;
 import util.SqlConnection;
+import util.SqlQueries;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.LocalDate;
 import java.util.Date;
 
 public class FlightDaoImpl implements FlightDao {
 
-    Connection connection = SqlConnection.createConnection();
+    Connection connection;
 
     @Override
     public ResultSet showAllFlights() {
         try {
+            connection = SqlConnection.checkConnection(connection);
             Statement statement = connection.createStatement();
-            return statement.executeQuery("Select * from Flights where " +
-                   " date = current_date + INTERVAL '1 DAY'");
+            ResultSet resultSet = statement.executeQuery(SqlQueries.selectAllFlightsSql());
+            connection.close();
+            return resultSet;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             return null;
@@ -29,9 +31,11 @@ public class FlightDaoImpl implements FlightDao {
     @Override
     public ResultSet showFlightBySerial(String serial_number) {
         try {
+            connection = SqlConnection.checkConnection(connection);
             Statement statement = connection.createStatement();
-            return statement.executeQuery("Select * from Flights where " +
-                    " date = current_date + INTERVAL '1 DAY' AND serial_number='"+serial_number+"'");
+            ResultSet resultSet = statement.executeQuery(SqlQueries.selectFlightBySerialSql(serial_number));
+            connection.close();
+            return resultSet;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             return null;
@@ -41,9 +45,11 @@ public class FlightDaoImpl implements FlightDao {
     @Override
     public ResultSet getFlightsForBooking(String destination, short seats, Date date) {
         try {
+            connection = SqlConnection.checkConnection(connection);
             Statement statement = connection.createStatement();
-            return statement.executeQuery(String.format("Select * from Flights where " +
-                    "destination = '%s' AND seats >= %d AND \"date\" = '%s'", destination, seats, date));
+            ResultSet resultSet = statement.executeQuery(SqlQueries.selectFlightsForBookingSql(destination, seats, date));
+            connection.close();
+            return resultSet;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             return null;
@@ -54,9 +60,11 @@ public class FlightDaoImpl implements FlightDao {
     @Override
     public boolean updateFlightSeats(short seats, String serial_number) {
         try {
+            connection = SqlConnection.checkConnection(connection);
             Statement statement = connection.createStatement();
-            return statement.execute(String.format("Update Flights set seats =  %d where serial_number = '%s'",
-                    seats, serial_number));
+            boolean bool =  statement.execute(SqlQueries.updateFlightSeatsSql(seats, serial_number));
+            connection.close();
+            return bool;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             return true;
